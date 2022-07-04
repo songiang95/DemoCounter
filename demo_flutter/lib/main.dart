@@ -1,9 +1,9 @@
 import 'package:demo_flutter/provider/counter_model.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -21,44 +21,36 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends ConsumerWidget { //         <- ConsumerWidget
   const MyHomePage({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider<CounterModel>(//              <-- ChangeNotifierProvider
-        create: (ctx) => CounterModel(),
-        builder: (context, child) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(title),
-          ),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const Text(
-                  'You have pushed the button this many times:',
-                ),
-                Consumer<CounterModel>( //                 <-- Consumer
-                  builder: (ctx, counterModel, _) {
-                    return Text(
-                      '${counterModel.counter}',
-                      style: Theme.of(context).textTheme.headline4,
-                    );
-                  },
-                ),
-              ],
+  Widget build(BuildContext context, WidgetRef ref) {
+    final counterNotifier = ref.watch(counterProvider.notifier); // get notifier
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              'You have pushed the button this many times:',
             ),
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () => context.read<CounterModel>().increase(), //       <-- Provide.of
-            tooltip: 'Increment',
-            child: const Icon(Icons.add),
-          ), // This trailing comma makes auto-formatting nicer for build methods.
-        );
-      },
+            Text(
+              '${counterNotifier.state.count}',
+              style: Theme.of(context).textTheme.headline4,
+            )
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => counterNotifier.increase(),
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

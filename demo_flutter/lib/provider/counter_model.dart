@@ -1,10 +1,20 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CounterModel extends ChangeNotifier {
-  int counter = 0;
+class CounterModel {
+  const CounterModel(this.count);
+
+  final int count;
+}
+
+class CounterNotifier extends StateNotifier<CounterModel> {
+  CounterNotifier() : super(const CounterModel(0));
 
   void increase() {
-    counter++;
-    notifyListeners();
+    state = CounterModel(state.count + 1);
   }
 }
+
+final counterProvider = StateNotifierProvider<CounterNotifier, CounterModel>((ref) => CounterNotifier());
+
+
+
