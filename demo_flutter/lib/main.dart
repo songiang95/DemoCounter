@@ -27,8 +27,9 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(//              <-- ChangeNotifierProvider
-      builder: (context, child) {
+    return ChangeNotifierProvider<CounterModel>(//              <-- ChangeNotifierProvider
+        create: (ctx) => CounterModel(),
+        builder: (context, child) {
         return Scaffold(
           appBar: AppBar(
             title: Text(title),
@@ -58,7 +59,6 @@ class MyHomePage extends StatelessWidget {
           ), // This trailing comma makes auto-formatting nicer for build methods.
         );
       },
-      create: (ctx) => CounterModel(),
     );
   }
 }
